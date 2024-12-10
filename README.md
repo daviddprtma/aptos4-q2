@@ -78,5 +78,8 @@ npm start
 ```
 # Video Presentation
 For the video presentation, see it in below: 
+<br> 
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/rxq3x_99_xQ/0.jpg)](https://www.youtube.com/watch?v=rxq3x_99_xQ)
 
 
