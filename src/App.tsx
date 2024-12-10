@@ -76,6 +76,7 @@ function App() {
                 <Select.Option value={2}>Uncommon</Select.Option>
                 <Select.Option value={3}>Rare</Select.Option>
                 <Select.Option value={4}>Epic</Select.Option>
+                <Select.Option value={5}>Legendary</Select.Option>
               </Select>
             </Form.Item>
             <Form.Item>

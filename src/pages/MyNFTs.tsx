@@ -149,6 +149,52 @@ const MyNFTs: React.FC = () => {
 
   const paginatedNFTs = nfts.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
+  // transfer nft to another wallets
+  const transferNFT = async (nft: NFT, to: string) => {
+    try {
+      const entryFunctionPayload = {
+        type: "entry_function_payload",
+        function: `${marketplaceAddr}::NFTMarketplace::transfer_ownership`,
+        type_arguments: [],
+        arguments: [marketplaceAddr, nft.id.toString(), to],
+      };
+
+      // Bypass type checking
+      const response = await (window as any).aptos.signAndSubmitTransaction(entryFunctionPayload);
+      await client.waitForTransaction(response.hash);
+    
+      message.success("NFT transferred successfully!");
+      fetchUserNFTs();
+    } catch (error) {
+      console.error("Error transferring NFT:", error);
+      message.error("Failed to transfer NFT.");
+    }
+  }
+
+  // update nft price
+  const updateNFTPrice = async (nft: NFT, price: number) => {
+    try {
+      const priceInOctas = price * 100000000;
+
+      const entryFunctionPayload = {
+        type: "entry_function_payload",
+        function: `${marketplaceAddr}::NFTMarketplace::set_price`,
+        type_arguments: [],
+        arguments: [marketplaceAddr, nft.id.toString(), priceInOctas.toString()],
+      };
+
+      // Bypass type checking
+      const response = await (window as any).aptos.signAndSubmitTransaction(entryFunctionPayload);
+      await client.waitForTransaction(response.hash);
+    
+      message.success("NFT price updated successfully!");
+      fetchUserNFTs();
+    } catch (error) {
+      console.error("Error updating NFT price:", error);
+      message.error("Failed to update NFT price.");
+    }
+  }
+
   return (
     <div
       style={{
@@ -195,6 +241,16 @@ const MyNFTs: React.FC = () => {
                 <Button type="link" onClick={() => handleSellClick(nft)}>
                   Sell
                 </Button>
+              ,
+              // update price button
+              <Button type="link" onClick={() => updateNFTPrice(nft, 100)}>
+                Update Price
+              </Button>
+              ,
+              // transfer button
+              <Button type="link" onClick={() => transferNFT(nft, "0xa759e039ecf9dc7d263aa4b05c2af69d1c798092ae7e9eff52f94784a265d786")}>
+                Transfer
+              </Button>
               ]}
             >
               <Meta title={nft.name} description={`Rarity: ${nft.rarity}, Price: ${nft.price} APT`} />

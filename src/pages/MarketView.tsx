@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Typography, Radio, message, Card, Row, Col, Pagination, Tag, Button, Modal } from "antd";
+import { Typography, Radio, message, Card, Row, Col, Pagination, Tag, Button, Modal, Input } from "antd";
 import { AptosClient } from "aptos";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
+const { Search } = Input;
 const { Title } = Typography;
 const { Meta } = Card;
 
@@ -35,11 +36,26 @@ const rarityLabels: { [key: number]: string } = {
   2: "Uncommon",
   3: "Rare",
   4: "Super Rare",
+  5: "Rarity",
+  6: "Date Listed"
 };
-
 const truncateAddress = (address: string, start = 6, end = 4) => {
   return `${address.slice(0, start)}...${address.slice(-end)}`;
 };
+
+// search for nft name, description, owner, id
+const searchNfts = (nfts: NFT[], query: string) => {
+  return nfts.filter((nft) => {
+    const lowerCaseQuery = query.toLowerCase();
+    return (
+      nft.name.toLowerCase().includes(lowerCaseQuery) ||
+      nft.description.toLowerCase().includes(lowerCaseQuery) ||
+      
+      nft.id.toString().includes(query)
+    );
+  });
+}
+
 
 const MarketView: React.FC<MarketViewProps> = ({ marketplaceAddr }) => {
   const { signAndSubmitTransaction } = useWallet();
@@ -77,6 +93,7 @@ const MarketView: React.FC<MarketViewProps> = ({ marketplaceAddr }) => {
             description: new TextDecoder().decode(hexToUint8Array(nft.description.slice(2))),
             uri: new TextDecoder().decode(hexToUint8Array(nft.uri.slice(2))),
             price: nft.price / 100000000,
+            owner: nft.owner.slice(0,6) + "..." + nft.owner.slice(nft.owner.length - 4),
         }));
 
         // Filter NFTs based on `for_sale` property and rarity if selected
@@ -137,8 +154,21 @@ const MarketView: React.FC<MarketViewProps> = ({ marketplaceAddr }) => {
         alignItems: "center",
       }}
     >
+
+      {/* search nft  */}
+      <Search
+        placeholder="Search NFTs"
+        allowClear
+        enterButton
+        onSearch={(value) => setNfts(searchNfts(nfts, value))}
+        style={{ width: "50%", marginBottom: "20px", marginTop: "20px" }}
+        onClear={() => handleFetchNfts(undefined)}
+      />
+
+
+
       <Title level={2} style={{ marginBottom: "20px" }}>Marketplace</Title>
-  
+        
       {/* Filter Buttons */}
       <div style={{ marginBottom: "20px" }}>
         <Radio.Group
@@ -155,8 +185,10 @@ const MarketView: React.FC<MarketViewProps> = ({ marketplaceAddr }) => {
           <Radio.Button value={2}>Uncommon</Radio.Button>
           <Radio.Button value={3}>Rare</Radio.Button>
           <Radio.Button value={4}>Super Rare</Radio.Button>
+          <Radio.Button value={5}>Rarity</Radio.Button>          
         </Radio.Group>
       </div>
+
   
       {/* Card Grid */}
       <Row
@@ -204,7 +236,7 @@ const MarketView: React.FC<MarketViewProps> = ({ marketplaceAddr }) => {
               <Meta title={nft.name} description={`Price: ${nft.price} APT`} />
               <p>{nft.description}</p>
               <p>ID: {nft.id}</p>
-              <p>Owner: {truncateAddress(nft.owner)}</p>
+              <p>Owner: {nft.owner}</p>
             </Card>
           </Col>
         ))}
@@ -249,5 +281,7 @@ const MarketView: React.FC<MarketViewProps> = ({ marketplaceAddr }) => {
     </div>
   );
 };
+
+
 
 export default MarketView;
