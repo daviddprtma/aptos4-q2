@@ -37,6 +37,8 @@ Here's the tutorial about how to use this project:
 Before to use this project, make sure that you have installed: 
 
 - Petra Wallet Extension have been installed in your machine. Notes: If you have google chrome, then install it in here [Petra Wallet Extension](https://chromewebstore.google.com/detail/petra-aptos-wallet/ejjladinnckdgjemekebdpeokbikhfci)
+- After installed petra wallet, change your network from mainnet to devnet in the Setiings icon in bottom right -> navigate Network -> select Devnet.
+- Be sure to have the faucet token by click on Faucet and the you'll get free devnet APT.
 - Aptos CLI by type this in your terminal: curl -fsSL "https://aptos.dev/scripts/install_cli.py" | python3 
 - Afterthat type aptos info to get the info for your aptos successfully downloaded.
 
